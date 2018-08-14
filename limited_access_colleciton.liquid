@@ -1,0 +1,29 @@
+{% comment %}Get number of current limited collections in theme settings{% endcomment %}
+{% assign num_of_special_collections = settings.number_of_limited_collections | plus: 0 %}
+
+{% assign customer_email_downcase = customer.email | downcase %}
+
+{% comment %}Loop through all limited collection in settings{% endcomment %}
+{% for i in (1..num_of_special_collections) %}
+
+  {% capture tag_requirement_key %}limited_collection_{{ i }}_tag_requirement{% endcapture %}
+  {% capture email_requirement_key %}limited_collection_{{ i }}_email_requirement{% endcapture %}
+  {% capture collection_handle_key %}limited_collection_{{ i }}_handle{% endcapture %}
+
+  {% assign tag_requirement = settings[tag_requirement_key] %}
+  {% assign email_requirement = settings[email_requirement_key] %}
+  {% assign email_requirement_downcase = email_requirement | downcase %}
+  {% assign collection_handle = settings[collection_handle_key] %}
+
+  {% comment %}Check if customer tags contains limited tag requirement{% endcomment %}
+  {% if customer.tags contains tag_requirement %}
+    {% comment %}Build array of collection handles that customer can access{% endcomment %}
+    {% assign available_limited_collections = available_limited_collections | append: collection_handle | append: "," %}
+  {% elsif customer_email_downcase contains email_requirement_downcase and email_requirement_downcase != blank %}
+    {% comment %}Build array of collection handles that customer can access{% endcomment %}
+    {% assign available_limited_collections = available_limited_collections | append: collection_handle | append: "," %}
+  {% endif %}
+
+{% endfor %}
+
+{% assign available_limited_collections = available_limited_collections | split: "," %}

@@ -1,0 +1,206 @@
+{% assign upsell_collection = "" %}
+{% assign popup_title = "" %}
+{% assign quick_buy_line_item_properties = "" %}
+
+{% for block in section.blocks %}
+
+  {% if block.settings.enable_promo %}
+
+    {% assign promo_gender_downcase = block.settings.gender | downcase %}
+    {% assign promo_requirement = block.settings.requirement %}
+    {% assign requirement_values = block.settings.requirement_values %}
+    {% assign requirement_arr = requirement_values | split: "," %}
+    {% assign use_collection = false %}
+    {% assign upsell_item_in_cart = false %}
+
+    {% assign set_count = 0 %}
+    {% assign checked_requirements = "" %}
+
+    {% for item in cart.items %}
+
+      {% for upsell_product in collections[block.settings.promo_collection].products %}
+        {% if upsell_product.id == item.product.id %}
+          {% assign upsell_item_in_cart = true %}
+        {% endif %}
+      {% endfor %}
+
+      {% unless upsell_item_in_cart %}
+        {% assign item_type_downcase = item.product.type | downcase %}
+        {% assign item_title_downcase = item.product.title | downcase %}
+        {% assign item_gender = "all" %}
+
+        {% if item_title_downcase contains "women" %}
+          {% assign item_gender = "women" %}
+        {% elsif item_title_downcase contains "men" %}
+          {% assign item_gender = "men" %}
+        {% endif %}
+
+        {% if promo_requirement == "type" %}
+          {% if item_gender == promo_gender_downcase %}
+            {% for value in requirement_arr %}
+              {% assign value_downcase = value | strip | downcase %}
+              {% if item_type_downcase == value_downcase %}
+                {% unless checked_requirements contains item_type_downcase %}
+                  {% assign set_count = set_count | plus: 1 %}
+                {% endunless %}
+                {% assign checked_requirements = checked_requirements | append: item_type_downcase | append: "," %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+
+        {% endif %}
+      {% endunless %}
+    {% endfor %}
+
+    {% if set_count >= 2 %}
+      {% assign use_collection = true %}
+    {% endif %}
+
+    {% if use_collection %}
+      {% unless upsell_item_in_cart %}
+        {% assign upsell_collection = block.settings.promo_collection %}
+        {% assign popup_title = block.settings.popup_header %}
+        {% assign quick_buy_line_item_properties = block.settings.line_item_properties %}
+        <div class="mini-cart__upsell">
+          <form class="mini-cart__upsell__form" action="/cart/add" method="post" enctype="multipart/form-data" data-mini-cart-product-form>
+            <h3 class="mini-cart__upsell__title">{{ block.settings.upsell_title }}</h3>
+            <div class="mini-cart__upsell__body">
+              <img class="mini-cart__upsell__image" src="{{ block.settings.upsell_image | img_url: '200x200', crop: 'center' }}" alt="{{ block.settings.upsell_image.alt | escape }}" />
+              <div class="mini-cart__upsell__message">
+                <p>{{ block.settings.upsell_content }}</p>
+              </div>
+              <div class="mini-cart__upsell__action">
+                <div class="btn-combo btn-combo--size">
+                  {% include 'options-size-dropdown', prod: upsell_product, selected_color: upsell_color, selected_size: upsell_size %}
+                  <button type="button" class="btn" data-trigger-set-promo-popup data-mini-cart-close>{{ block.settings.cta_text }}</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      {% endunless %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+<div class="hide" data-cart-set-items>
+  <h2 class="promo-popup__overlay--header">{{ popup_title }}</h2>
+  {% for product in collections[upsell_collection].products %}
+    {% include "collection-item" quick_buy_line_item_properties: quick_buy_line_item_properties %}
+  {% endfor %}
+</div>
+{% schema %}
+  {
+    "name": "Item Set Promos",
+    "settings": [
+
+    ],
+    "blocks": [
+      {
+        "type": "promo",
+        "name": "Promo",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_promo",
+            "label": "Enable Promo",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Promo Title"
+          },
+          {
+            "type": "header",
+            "content": "Requirements"
+          },
+          {
+            "type": "select",
+            "id": "gender",
+            "label": "Gender",
+            "default": "all",
+            "options": [
+              {
+                "group": "value",
+                "label": "All",
+                "value": "all"
+              },
+              {
+                "group": "value",
+                "label": "Men",
+                "value": "men"
+              },
+              {
+                "group": "value",
+                "label": "Women",
+                "value": "women"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "requirement",
+            "label": "Requirement Type",
+            "options": [
+              {
+                "group": "value",
+                "label": "Product Type",
+                "value": "type"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "id": "requirement_values",
+            "label": "Requirements"
+          },
+          {
+            "type": "header",
+            "content": "Promo Info"
+          },
+          {
+            "type": "text",
+            "id": "upsell_title",
+            "label": "Upsell title"
+          },
+          {
+            "type": "html",
+            "id": "upsell_content",
+            "label": "Upsell Message"
+          },
+          {
+            "type": "image_picker",
+            "id": "upsell_image",
+            "label": "Upsell Image"
+          },
+          {
+            "type": "text",
+            "id": "cta_text",
+            "label": "CTA Text"
+          },
+          {
+            "type": "header",
+            "content": "Popup Settings"
+          },
+          {
+            "type" : "html",
+            "id": "popup_header",
+            "label": "Popup Header Title"
+          },
+          {
+            "type": "collection",
+            "id": "promo_collection",
+            "label": "Promo Collection",
+            "info": "The collection of products we want to upsell."
+          },
+          {
+            "type": "text",
+            "id": "line_item_properties",
+            "label": "Line Item Properties",
+            "info": "Property Name 1: Property Value 1, Property Name 2: Property Value 2"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

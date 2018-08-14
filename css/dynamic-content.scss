@@ -1,0 +1,274 @@
+
+/* ========= Ambassador Header ========= */
+
+.header-with-video{
+  background-color: #242424;
+}
+
+.header-with-video__container{
+  padding: 60px 50px;
+}
+
+.header-with-video__content{
+  display: none;
+  &.header-with-video__content--mobile{
+    display: block;
+  }
+}
+
+.header-with-video__video{
+  width: 100%;
+  padding: 0;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.header-with-video__title{
+  font-size: 32px;
+  line-height: 36px;
+}
+
+.header-with-video__summary{
+  padding: 0;
+  margin: 0;
+  color: #ffffff;
+  font-size: 13px;
+  margin-bottom: 15px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.header-with-video__list{
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+  list-style-type: none;
+  text-indent: 0;
+}
+
+.header-with-video__list-item{
+  p{
+    padding: 0;
+    margin: 0;
+    color: #ffffff;
+    font-size: 13px;
+    margin-bottom: 3px;
+    line-height: 18px;
+    font-weight: 600;
+  }
+  &.header-with-video__list-item--title{
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 3px;
+  }
+}
+
+.header-with-video__title{
+  color: #ffffff;
+  display: none;
+  &.header-with-video__title--mobile{
+    display: block;
+  }
+}
+
+.header-with-video__links{
+  margin-top: 50px;
+}
+
+.header-with-video__link{
+  display: inline-block;
+  font-size: 16px;
+  letter-spacing: 1px;
+  line-height: 22px;
+  color: #ffffff;
+  margin-right: 20px;
+}
+
+.video-play-button{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  cursor: pointer;
+  &.hide{
+    display: none;
+  }
+}
+
+@include media-query($large-up) {
+  .header-with-video__content{
+    display: block;
+    &.header-with-video__content--mobile{
+      display: none;
+    }
+  }
+  .header-with-video__title{
+    display: block;
+    &.header-with-video__title--mobile{
+      display: none;
+    }
+  }
+  .header-with-video__video{
+    width: 50%;
+    padding-left: 30px;
+    margin-bottom: 0;
+  }
+}
+
+/* ========= Image Slider ========= */
+
+.image-slider{
+  margin: 50px 0;
+  position: relative;
+}
+
+.image-slider__slide{
+  margin: 0 20px;
+}
+
+.image-slider__arrow{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-trasnform: translateY(-50%);
+  cursor: pointer;
+  z-index: 2;
+  width: 35px;
+
+  @include media-query($medium-up) {
+    width: 50px;
+  }
+
+  .icon{
+    width: 50px;
+    height: 50px;
+    display: block;
+  }
+}
+
+.image-slider__arrow-left{
+  left: 10px;
+}
+
+.image-slider__arrow-right{
+  right: 10px;
+}
+
+/* ========= Interview ========= */
+
+.interview{
+  h2{
+    text-align: center;
+  }
+}
+
+.interview{
+  margin: 50px auto;
+}
+
+.interview__content{
+  max-width: 365px;
+  margin: 0 auto;
+  font-weight: 700;
+  text-align: center;
+  p{
+    margin: 0;
+    &:nth-child(2n){
+      margin-bottom: 10px;
+    }
+  }
+}
+
+.interview__content--overlay{
+  padding: 50px 0;
+}
+
+.interview__read-more{
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* ========= Ambassador Products ========= */
+
+.showcase-set{
+  height: 550px;
+  padding: 50px 0 0 20px;
+}
+
+.product-showcase{
+  text-align: center;
+  margin-top: -125px;
+  margin-bottom: 50px;
+  height: 260px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  white-space: nowrap;
+}
+
+.showcase-set__header{
+  font-size: 32px;
+  text-transform: none;
+  display: none;
+  &.showcase-set__header--mobile{
+    display: block;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+}
+
+.product-showcase__product{
+  width: 200px;
+  display: inline-block;
+  margin: 0 20px;
+  -webkit-box-shadow: 0px -2px 8px 0px rgba(40,40,40,0.2);
+  -moz-box-shadow: 0px -2px 8px 0px rgba(40,40,40,0.2);
+  box-shadow: 0px -2px 8px 0px rgba(40,40,40,0.2);
+}
+
+.product-showcase__product-image{
+  position: relative;
+  img{
+    display: block;
+  }
+}
+
+.product-showcase__product-add{
+  position: absolute;
+  bottom: 0;
+  height: 50px;
+  text-align: center;
+  display: block;
+  width: 100%;
+  vertical-align: middle;
+  line-height: 50px;
+  background-color: rgba(255,255,255,.75);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.product-showcase__product-title{
+  padding: 5px;
+  text-align: left;
+  background-color: #ffffff;
+  font-weight: 600;
+  p{
+    margin: 0;
+  }
+}
+
+@include media-query($large-up) {
+  .showcase-set__header{
+    display: block;
+    text-align: left;
+    &.showcase-set__header--mobile{
+      display: none;
+    }
+  }
+}

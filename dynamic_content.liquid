@@ -1,0 +1,380 @@
+{% assign page_handle = page.handle %}
+{% assign ambassador_block = "" %}
+{% assign question_count = 4 %}
+{% assign image_count = 4 %}
+{% assign product_count = 3 %}
+{% assign all_questions_count = 20 %}
+{% assign prev_ambassador_index = section.blocks | size | minus: 1 %}
+{% assign next_ambassador_index = 0 %}
+{% assign prev_ambassador = "" %}
+{% assign next_ambassador = "" %}
+
+{% for block in section.blocks %}
+  {% assign ambassador_handle = block.settings.handle %}
+  {% if ambassador_handle == page_handle %}
+    {% assign ambassador_index = forloop.index | minus: 1 %}
+    {% unless forloop.last %}
+      {% assign next_ambassador_index = ambassador_index | plus: 1 %}
+    {% endunless %}
+    {% assign ambassador = block %}
+    {% break %}
+  {% else %}
+    {% assign prev_ambassador_index = forloop.index | minus: 1 %}
+  {% endif %}
+{% endfor %}
+
+{% assign prev_ambassador = section.blocks[prev_ambassador_index] %}
+{% assign next_ambassador = section.blocks[next_ambassador_index] %}
+
+{% if ambassador %}
+  {% comment %}
+  ####### Section #######
+  ####### Header with video #######
+  {% endcomment %}
+  <div class="header-with-video">
+    <div class="site-width grid header-with-video__container">
+      <div class="header-with-video__content grid__item large-up--one-half">
+        <h1 class="header-with-video__title">{{ ambassador.settings.title }}</h1>
+        {% if ambassador.settings.handwriting %}
+          {% include 'helper-image' img: ambassador.settings.handwriting, img_respond: true %}
+        {% endif %}
+        <p class="header-with-video__summary">{{ ambassador.settings.introduction }}</p>
+        <div class="header-with-video__list">
+          <p class="header-with-video__list-item header-with-video__list-item--title">{{ ambassador.settings.favorite_item_title }}</p>
+          <div class="header-with-video__list-item">
+            {{ ambassador.settings.favorite_items }}
+          </div>
+        </div>
+        {% if section.settings.use_nav_buttons %}
+          <div class="header-with-video__links">
+            <a class="header-with-video__link" href="/pages/{{ prev_ambassador.settings.handle }}">{{ section.settings.previous_button }}</a>
+            <a class="header-with-video__link" href="/pages/{{ next_ambassador.settings.handle }}">{{ section.settings.next_button }}</a>
+          </div>
+        {% endif %}
+      </div>
+      <h1 class="header-with-video__title header-with-video__title--mobile">{{ ambassador.settings.title }}</h1>
+      <div class="header-with-video__video grid__item large-up--one-half" data-video-container>
+        <video poster="{{ ambassador.settings.video_poster | img_url: '769x' }}" playsinline {% if section.settings.use_video_controls %} controls controlsList="nodownload"{% endif %} data-toggle-video-play video-player>
+          <source src="{{ ambassador.settings.video }}" type="video/mp4">
+        </video>
+        {% unless section.settings.use_video_controls %}
+          {% include 'helper-image' img: section.settings.play_video_icon, img_respond: true, img_class: 'video-play-button', img_data: 'data-toggle-video-play data-video-play-button' %}
+        {% endunless %}
+      </div>
+      <div class="header-with-video__content header-with-video__content--mobile">
+        <p class="header-with-video__summary">{{ ambassador.settings.introduction }}</p>
+        <div class="header-with-video__list">
+          <p class="header-with-video__list-item header-with-video__list-item--title">{{ ambassador.settings.favorite_item_title }}</p>
+          <div class="header-with-video__list-item">
+            {{ ambassador.settings.favorite_items }}
+          </div>
+        </div>
+        {% if section.settings.use_nav_buttons %}
+          <div class="header-with-video__links">
+            <a class="header-with-video__link" href="/pages/{{ prev_ambassador.settings.handle }}">{{ section.settings.previous_button }}</a>
+            <a class="header-with-video__link" href="/pages/{{ next_ambassador.settings.handle }}">{{ section.settings.next_button }}</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% comment %}
+  ####### Section #######
+  ####### Image Slider #######
+  {% endcomment %}
+  <div class="image-slider" data-image-slider data-slides-to-show="{{ ambassador.settings.slides_to_show }}">
+    {% for image_index in (1..image_count) %}
+      {% capture image_key %}slider_image_{{ image_index }}{% endcapture %}
+      {% assign slider_image = ambassador.settings[image_key] %}
+      {% if slider_image %}
+      <div class="image-slider__slide">
+        {% include 'helper-image' img: slider_image, img_class: 'image-slider__image', img_data: ambassador.settings.title, img_respond: true %}
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div class="visually-hidden" data-slider-arrow-left>
+    <div class="image-slider__arrow image-slider__arrow-left"><img src="{{ 'icon-slider-left-arrow.png' | asset_img_url: '50x' }}" alt="Slide left" /></div>
+  </div>
+  <div class="visually-hidden" data-slider-arrow-right>
+    <div class="image-slider__arrow image-slider__arrow-right"><img src="{{ 'icon-slider-right-arrow.png' | asset_img_url: '50x' }}" alt="Slide right" /></div>
+  </div>
+  {% comment %}
+  ####### Section #######
+  ####### Questions / Answer #######
+  {% endcomment %}
+  <div class="interview">
+    <div class="interview__cointainer">
+      <h2 class="interview__title">INTERVIEW LOG</h2>
+        <div class="interview__content">
+          {{ ambassador.settings.interview_questions_preview }}
+        </div>
+        <div class="interview__read-more">
+          <a class="border toggle-interview" href="#">Read More</a>
+        </div>
+    </div>
+  </div>
+  {% comment %}
+  ####### Section #######
+  ####### Showcase Products #######
+  {% endcomment %}
+  <h1 class="showcase-set__header showcase-set__header--mobile">{{ ambassador.settings.upsell_title }}</h1>
+  <div class="showcase-set" style="background-color: {{ ambassador.settings.upsell_background_color }}; background-image: url({{ ambassador.settings.upsell_image | img_url: '769x' }}); background-position: top center; background-repeat: no-repeat; background-size: 400px 400px;">
+    <div class="showcase-set__container site-width">
+      <h1 class="showcase-set__header">{{ ambassador.settings.upsell_title }}</h1>
+    </div>
+  </div>
+  <div class="product-showcase">
+    <div class="product-showcase__container site-width">
+      {% for product_index in (1..product_count) %}
+        {% comment %} Product title {% endcomment %}
+        {% capture product_title_key %}product_title_{{ product_index }}{% endcapture %}
+        {% assign product_title = ambassador.settings[product_title_key] %}
+        {% comment %} Product image {% endcomment %}
+        {% capture product_image_key %}product_image_{{ product_index }}{% endcapture %}
+        {% assign product_image = ambassador.settings[product_image_key] %}
+        {% comment %} Product button {% endcomment %}
+        {% capture product_button_key %}product_button_{{ product_index }}{% endcapture %}
+        {% assign product_button = ambassador.settings[product_button_key] %}
+        {% comment %} Product handle {% endcomment %}
+        {% capture product_handle_key %}product_handle_{{ product_index }}{% endcapture %}
+        {% assign product_handle = ambassador.settings[product_handle_key] %}
+
+        {% unless product_title == blank %}
+          <div class="product-showcase__product">
+            <div class="product-showcase__product-title">
+              <p class="f-font-m f-font-height-m f-font-weight-b">{{ product_title }}</p>
+            </div>
+            <div class="product-showcase__product-image">
+              {% include 'helper-image' img: product_image, img_respond: true %}
+              <a href="/products/{{ product_handle }}" class="product-showcase__product-add f-font-m f-font-weight-b f-font-spacing-xxl font-upcase f-font-upcase">{{ product_button }}</a>
+            </div>
+          </div>
+        {% endunless %}
+      {% endfor %}
+    </div>
+  </div>
+  {% include "interview-overlay" %}
+{% endif %}
+
+{% schema %}
+{
+  "name": "Ambassadors",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "use_nav_buttons",
+      "label": "Use previous/next buttons"
+    },
+    {
+      "type": "text",
+      "id": "previous_button",
+      "label": "Previous Button"
+    },
+    {
+      "type": "text",
+      "id": "next_button",
+      "label": "Next Button"
+    },
+    {
+      "type": "header",
+      "content": "Video Player"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_video_controls",
+      "label": "Use Video Controls"
+    },
+    {
+      "type": "image_picker",
+      "id": "play_video_icon",
+      "label": "Play Video Icon",
+      "info": "Only used when controls are disabled"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ambassador",
+      "name": "Ambassador",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Ambassador Name"
+        },
+        {
+          "type": "text",
+          "id": "handle",
+          "label": "Page Handle"
+        },
+        {
+          "type": "image_picker",
+          "id": "handwriting",
+          "label": "Handwriting Image"
+        },
+        {
+          "type": "text",
+          "id": "video",
+          "label": "Video URL"
+        },
+        {
+          "type": "image_picker",
+          "id": "video_poster",
+          "label": "Video Poster/Fallback Image"
+        },
+        {
+          "type": "header",
+          "content": "Header Info"
+        },
+        {
+          "type": "textarea",
+          "id": "introduction",
+          "label": "Ambassador introduction"
+        },
+        {
+          "type": "text",
+          "id": "favorite_item_title",
+          "label": "Favorite Item Title"
+        },
+        {
+          "type": "richtext",
+          "id": "favorite_items",
+          "label": "Favorite Items"
+        },
+        {
+          "type": "header",
+          "content": "Image Slider"
+        },
+        {
+          "type": "text",
+          "id": "slides_to_show",
+          "label": "Number of slides on screen",
+          "info": "This is the number of slides always showing",
+          "default": "2"
+        },
+        {
+          "type": "image_picker",
+          "id": "slider_image_1",
+          "label": "Slider Image #1"
+        },
+        {
+          "type": "image_picker",
+          "id": "slider_image_2",
+          "label": "Slider Image #2"
+        },
+        {
+          "type": "image_picker",
+          "id": "slider_image_3",
+          "label": "Slider Image #3"
+        },
+        {
+          "type": "image_picker",
+          "id": "slider_image_4",
+          "label": "Slider Image #4"
+        },
+        {
+          "type": "header",
+          "content": "Upsell Products"
+        },
+        {
+          "type": "text",
+          "id": "upsell_title",
+          "label": "Upsell  Title",
+          "info": "Use <br> for line breaks"
+        },
+        {
+          "type": "image_picker",
+          "id": "upsell_image",
+          "label": "Upsell Image"
+        },
+        {
+          "type": "color",
+          "id": "upsell_background_color",
+          "label": "Upsell Background Color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "header",
+          "content": "Interview"
+        },
+        {
+          "type": "richtext",
+          "id": "interview_questions_preview",
+          "label": "Interview Questions - Preview",
+          "info": "Hit enter for new line. Do not leave new line empty."
+        },
+        {
+          "type": "richtext",
+          "id": "interview_questions_overlay",
+          "label": "All Interview Questions ",
+          "info": "Hit enter for new line. Do not leave new line empty."
+        },
+        {
+          "type": "header",
+          "content": "Products"
+        },
+        {
+          "type": "text",
+          "id": "product_title_1",
+          "label": "Product #1: Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image_1",
+          "label": "Product #1: Image"
+        },
+        {
+          "type": "text",
+          "id": "product_button_1",
+          "label": "Product #1: Button Text"
+        },
+        {
+          "type": "product",
+          "id": "product_handle_1",
+          "label": "Product #1: Product"
+        },
+        {
+          "type": "text",
+          "id": "product_title_2",
+          "label": "Product #2: Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image_2",
+          "label": "Product #2: Image"
+        },
+        {
+          "type": "text",
+          "id": "product_button_2",
+          "label": "Product #2: Button Text"
+        },
+        {
+          "type": "product",
+          "id": "product_handle_2",
+          "label": "Product #2: Product"
+        },
+        {
+          "type": "text",
+          "id": "product_title_3",
+          "label": "Product #3: Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image_3",
+          "label": "Product #3: Image"
+        },
+        {
+          "type": "text",
+          "id": "product_button_3",
+          "label": "Product #3: Button Text"
+        },
+        {
+          "type": "product",
+          "id": "product_handle_3",
+          "label": "Product #3: Product"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
